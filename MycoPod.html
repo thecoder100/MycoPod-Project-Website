@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MycoPod — Fungal Bioremediation Research</title>
+  <meta name="description" content="Investigating whether Pleurotus ostreatus can sequester lead from soil contaminated by the 2025 Eaton Fire in Altadena, California. A student research project in collaboration with Caltech.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #FAFAF7;
+      --fg:         #1A1A1A;
+      --primary:    #3D7A2E;
+      --primary-h:  #2d5a22;
+      --primary-fg: #ffffff;
+      --muted:      #F2F2ED;
+      --muted-fg:   #6B6B65;
+      --border:     #E2E2DB;
+      --card:       #ffffff;
+      --card-fg:    #1A1A1A;
+      --earth:      #B8834E;
+      --accent-bg:  #f0f7ea;
+      --accent-fg:  #2A5A1E;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.06);
+      --shadow:     0 4px 16px rgba(0,0,0,.08);
+      --shadow-lg:  0 8px 32px rgba(0,0,0,.10);
+      --radius:     .75rem;
+      --radius-lg:  1.25rem;
+    }
+    html.dark {
+      --bg:         #0D1117;
+      --fg:         #E6E6E0;
+      --primary:    #6DB551;
+      --primary-h:  #8ECF6E;
+      --primary-fg: #0D1117;
+      --muted:      #161B22;
+      --muted-fg:   #8B8B85;
+      --border:     #272E38;
+      --card:       #161B22;
+      --card-fg:    #E6E6E0;
+      --earth:      #C8975C;
+      --accent-bg:  #0F1F0A;
+      --accent-fg:  #8ECF6E;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.3);
+      --shadow:     0 4px 16px rgba(0,0,0,.5);
+      --shadow-lg:  0 8px 32px rgba(0,0,0,.6);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 400;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+
+    ::selection { background: rgba(61,122,46,.18); }
+    html.dark ::selection { background: rgba(109,181,81,.25); }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+    /* ============================================================
+       TYPOGRAPHY
+    ============================================================ */
+    .font-serif { font-family: 'Crimson Text', Georgia, 'Times New Roman', serif; }
+
+    h1, h2, h3, h4 {
+      font-family: 'Crimson Text', Georgia, serif;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--fg);
+    }
+
+    .eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: .75rem;
+      display: block;
+    }
+
+    .section-title {
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      letter-spacing: -.015em;
+      color: var(--fg);
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      color: var(--muted-fg);
+      line-height: 1.75;
+      margin-top: 1rem;
+      max-width: 52ch;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--earth) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    html.dark .gradient-text {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--earth) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    @media (min-width: 768px) { .container { padding: 0 2.5rem; } }
+    @media (min-width: 1024px) { .container { padding: 0 3rem; } }
+
+    .section { padding: 5rem 0; }
+    .section-alt { background: var(--muted); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .section-header { margin-bottom: 3rem; }
+    .section-header.centered { text-align: center; }
+    .section-header.centered .section-desc { margin-left: auto; margin-right: auto; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    @media (min-width: 640px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+
+    /* ============================================================
+       SCROLL PROGRESS BAR
+    ============================================================ */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--primary);
+      transform-origin: left; transform: scaleX(0);
+      z-index: 1000; transition: transform .05s linear;
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      transition: background .3s, border-color .3s, box-shadow .3s;
+    }
+    #navbar.scrolled {
+      background: rgba(250,250,247,.85);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      -webkit-backdrop-filter: blur(14px) saturate(1.6);
+      backdrop-filter: blur(14px) saturate(1.6);
+    }
+    html.dark #navbar.scrolled {
+      background: rgba(13,17,23,.85);
+    }
+
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 4rem; max-width: 1200px; margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    @media (min-width: 768px) { .nav-inner { padding: 0 2.5rem; } }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: .6rem;
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 1.2rem; font-weight: 600;
+      color: var(--fg); text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 2rem; height: 2rem; border-radius: .5rem;
+      background: rgba(61,122,46,.1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    html.dark .nav-logo-icon { background: rgba(109,181,81,.12); }
+    .nav-logo-icon svg { width: 1rem; height: 1rem; color: var(--primary); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .nav-links {
+      display: none; align-items: center; gap: .25rem;
+      list-style: none;
+    }
+    @media (min-width: 1024px) { .nav-links { display: flex; } }
+
+    .nav-links a {
+      font-size: .85rem; color: var(--muted-fg);
+      padding: .375rem .75rem; border-radius: .5rem;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--fg); background: var(--muted); }
+    .nav-links a.active { color: var(--primary); background: var(--accent-bg); font-weight: 500; }
+
+    .nav-actions { display: flex; align-items: center; gap: .5rem; }
+
+    .btn-icon {
+      width: 2.25rem; height: 2.25rem; border-radius: .5rem;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted-fg); transition: color .2s, background .2s;
+    }
+    .btn-icon:hover { color: var(--fg); background: var(--muted); }
+    .btn-icon svg { width: 1rem; height: 1rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .btn-primary-sm {
+      display: none; align-items: center; gap: .375rem;
+      font-size: .85rem; font-weight: 500;
+      padding: .375rem 1rem; border-radius: .5rem;
+      background: var(--primary); color: var(--primary-fg);
+      transition: background .2s, box-shadow .2s;
+    }
+    .btn-primary-sm:hover { background: var(--primary-h); }
+    @media (min-width: 640px) { .btn-primary-sm { display: flex; } }
+
+    /* Mobile menu */
+    #menu-toggle { display: flex; }
+    @media (min-width: 1024px) { #menu-toggle { display: none; } }
+
+    #mobile-menu {
+      display: none; flex-direction: column; gap: .25rem;
+      position: fixed; inset: 4rem 0 0 0; z-index: 400;
+      padding: 1.5rem;
+      -webkit-backdrop-filter: blur(16px) saturate(1.6);
+      backdrop-filter: blur(16px) saturate(1.6);
+      background: rgba(250,250,247,.95);
+      border-top: 1px solid var(--border);
+      overflow-y: auto;
+    }
+    html.dark #mobile-menu { background: rgba(13,17,23,.95); }
+    #mobile-menu.open { display: flex; }
+
+    #mobile-menu a {
+      display: block; padding: .875rem 1rem;
+      border-radius: .75rem; color: var(--fg); font-size: 1rem;
+      transition: background .15s;
+    }
+    #mobile-menu a:hover { background: var(--muted); }
+    #mobile-menu a.active { color: var(--primary); background: var(--accent-bg); font-weight: 500; }
+    #mobile-menu .mobile-cta {
+      margin-top: 1rem; padding: .875rem 1rem;
+      border-radius: .75rem; text-align: center;
+      background: var(--primary); color: var(--primary-fg); font-weight: 500;
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #home {
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden;
+      padding: 6rem 1.5rem 4rem;
+      background-color: #0a0503;
+      background-image: url('eaton-map.jpg');
+      background-size: cover;
+      background-position: center 38%;
+    }
+
+    .hero-map-overlay {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        linear-gradient(to bottom,
+          rgba(6,3,1,0.72) 0%,
+          rgba(6,3,1,0.58) 40%,
+          rgba(6,3,1,0.70) 75%,
+          var(--bg) 100%);
+    }
+
+    #mycelium-canvas {
+      position: absolute; inset: 0; z-index: 1;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    .hero-vignette {
+      position: absolute; inset: 0; pointer-events: none; z-index: 2;
+      background:
+        radial-gradient(ellipse 90% 50% at 50% 0%, rgba(180,90,20,0.10) 0%, transparent 70%),
+        linear-gradient(to bottom, transparent 60%, var(--bg) 100%);
+    }
+
+    /* Hero text is always light — map bg is always dark */
+    #home .hero-meta-item { color: rgba(235,218,190,0.6); }
+    #home .hero-meta-item svg { color: rgba(235,218,190,0.55); }
+    #home .hero-meta-item.earth svg { color: rgba(220,155,80,0.8); }
+    #home .hero-meta-item.green svg { color: rgba(130,210,90,0.8); }
+    #home .hero-meta-divider { background: rgba(235,218,190,0.2); }
+    #home .hero-title { color: #F5F0E8; }
+    #home .hero-subtitle { color: rgba(235,218,190,0.72); }
+    #home .hero-sub2 { color: rgba(235,218,190,0.45); }
+    #home .hero-tag { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); color: rgba(235,218,190,0.58); }
+    #home .hero-scroll { color: rgba(235,218,190,0.38); }
+    #home .btn-secondary {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.22);
+      color: #F5F0E8;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+    #home .btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+    .hero-content {
+      position: relative; z-index: 3;
+      text-align: center; max-width: 50rem;
+    }
+
+    .hero-meta {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 1.25rem; margin-bottom: 2.5rem;
+    }
+    .hero-meta-item {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+      font-weight: 500; color: var(--muted-fg);
+    }
+    .hero-meta-item svg { width: .75rem; height: .75rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-meta-item.earth svg { color: var(--earth); }
+    .hero-meta-item.green svg { color: var(--primary); }
+    .hero-meta-divider { width: 1px; height: .75rem; background: var(--border); }
+
+    .hero-title {
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 600; line-height: 1.02; letter-spacing: -.03em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--muted-fg); line-height: 1.65;
+      max-width: 38rem; margin: 0 auto 1rem;
+    }
+
+    .hero-sub2 {
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem; color: var(--muted-fg); opacity: .7;
+      font-style: italic; max-width: 36rem; margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+
+    .hero-ctas {
+      display: flex; flex-wrap: wrap; gap: .75rem;
+      align-items: center; justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .9rem; font-weight: 500;
+      padding: .75rem 1.5rem; border-radius: .75rem;
+      background: var(--primary); color: var(--primary-fg);
+      box-shadow: var(--shadow-sm);
+      transition: background .2s, box-shadow .2s, transform .15s;
+    }
+    .btn-primary:hover { background: var(--primary-h); box-shadow: var(--shadow); }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary svg { width: 1rem; height: 1rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .9rem; font-weight: 500;
+      padding: .75rem 1.5rem; border-radius: .75rem;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.7); color: var(--fg);
+      transition: background .2s, border-color .2s, transform .15s;
+    }
+    html.dark .btn-secondary { background: rgba(22,27,34,.7); }
+    .btn-secondary:hover { background: var(--muted); border-color: rgba(61,122,46,.3); }
+    .btn-secondary:active { transform: scale(.98); }
+
+    .hero-tags {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      align-items: center; justify-content: center;
+    }
+    .hero-tag {
+      font-size: .7rem; padding: .3rem .8rem;
+      border-radius: 999px; border: 1px solid var(--border);
+      background: var(--muted); color: var(--muted-fg);
+    }
+
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; z-index: 3;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      color: var(--muted-fg);
+    }
+    .hero-scroll span { font-size: .65rem; letter-spacing: .15em; text-transform: uppercase; }
+    .hero-scroll svg {
+      width: 1rem; height: 1rem; stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      animation: bounce 1.8s ease-in-out infinite;
+    }
+    @keyframes bounce { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(6px); } }
+
+    /* ============================================================
+       STATS BAR
+    ============================================================ */
+    #stats {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--muted);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem 1.5rem;
+      text-align: center;
+    }
+    @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .stat-value {
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 2.25rem; font-weight: 600;
+      color: var(--primary); line-height: 1;
+      margin-bottom: .25rem;
+    }
+    .stat-label {
+      font-size: .65rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: .5rem;
+    }
+    .stat-desc {
+      font-size: .78rem; color: var(--muted-fg);
+      line-height: 1.5; display: none;
+    }
+    @media (min-width: 640px) { .stat-desc { display: block; } }
+
+    /* ============================================================
+       CARDS & COMPONENTS
+    ============================================================ */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .card-body { padding: 1.5rem; }
+    .card-hover {
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      cursor: pointer;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: rgba(61,122,46,.2);
+    }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: .7rem; font-weight: 500; letter-spacing: .04em;
+      padding: .25rem .65rem; border-radius: 999px;
+      border: 1px solid;
+    }
+    .badge-primary { background: var(--accent-bg); color: var(--accent-fg); border-color: rgba(61,122,46,.2); }
+    .badge-muted { background: var(--muted); color: var(--muted-fg); border-color: var(--border); }
+    .badge-preparation { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .badge-inoculation { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+    .badge-growth      { background: #dcfce7; color: #14532d; border-color: #86efac; }
+    .badge-measurement { background: #dbeafe; color: #1e3a8a; border-color: #93c5fd; }
+    .badge-analysis    { background: #ede9fe; color: #4c1d95; border-color: #c4b5fd; }
+    html.dark .badge-preparation { background: rgba(146,64,14,.2); color: #fcd34d; border-color: rgba(252,211,77,.3); }
+    html.dark .badge-inoculation { background: rgba(6,95,70,.2); color: #6ee7b7; border-color: rgba(110,231,183,.3); }
+    html.dark .badge-growth      { background: rgba(20,83,45,.2); color: #86efac; border-color: rgba(134,239,172,.3); }
+    html.dark .badge-measurement { background: rgba(30,58,138,.2); color: #93c5fd; border-color: rgba(147,197,253,.3); }
+    html.dark .badge-analysis    { background: rgba(76,29,149,.2); color: #c4b5fd; border-color: rgba(196,181,253,.3); }
+
+    /* ============================================================
+       ABOUT SECTION
+    ============================================================ */
+    #about .about-grid {
+      display: grid; gap: 1.25rem;
+    }
+    @media (min-width: 768px) { #about .about-grid { grid-template-columns: 1fr 1fr; } }
+
+    .about-card { padding: 1.75rem; }
+    .about-icon-wrap {
+      width: 2.5rem; height: 2.5rem; border-radius: .75rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .about-icon-wrap svg { width: 1.25rem; height: 1.25rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .about-card h3 { font-size: 1.2rem; margin-bottom: .75rem; }
+    .about-card p { font-size: .9rem; color: var(--muted-fg); line-height: 1.75; }
+    .about-card p + p { margin-top: .75rem; }
+
+    .about-card .icon-fire { background: rgba(239,68,68,.1); color: #ef4444; }
+    .about-card .icon-alert { background: rgba(245,158,11,.1); color: #f59e0b; }
+    .about-card .icon-flask { background: rgba(59,130,246,.1); color: #3b82f6; }
+    .about-card .icon-leaf  { background: var(--accent-bg); color: var(--primary); }
+
+    .researchers {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .researcher-card {
+      padding: 1.25rem; border-radius: var(--radius);
+      border: 1px solid var(--border); background: var(--muted);
+    }
+    .researcher-card .name { font-size: .95rem; font-weight: 600; color: var(--fg); }
+    .researcher-card .role { font-size: .78rem; color: var(--primary); margin: .2rem 0; }
+    .researcher-card .inst { font-size: .75rem; color: var(--muted-fg); }
+
+    .pub-callout {
+      padding: 1.5rem; border-radius: var(--radius-lg);
+      border: 1px solid rgba(61,122,46,.25); background: var(--accent-bg);
+      margin-top: 2rem;
+    }
+    .pub-callout .pub-label { font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--primary); margin-bottom: .5rem; }
+    .pub-callout h3 { font-size: 1.1rem; margin-bottom: .5rem; }
+    .pub-callout p { font-size: .87rem; color: var(--muted-fg); line-height: 1.7; }
+
+    /* ============================================================
+       RESEARCH SECTION
+    ============================================================ */
+    #research .rq-grid { display: grid; gap: 1rem; margin-bottom: 2.5rem; }
+    @media (min-width: 768px) { #research .rq-grid { grid-template-columns: 1fr 1fr; } }
+
+    .rq-box {
+      padding: 1.5rem; border-radius: var(--radius-lg);
+    }
+    .rq-box-primary {
+      border: 2px solid rgba(61,122,46,.35); background: var(--accent-bg);
+    }
+    .rq-box-earth {
+      border: 1px solid var(--border); background: var(--card);
+    }
+    .rq-box-label {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+    .rq-box-label svg { width: .9rem; height: .9rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .rq-box-primary .rq-box-label { color: var(--primary); }
+    .rq-box-earth .rq-box-label { color: var(--earth); }
+    .rq-box-primary .rq-title { font-size: 1.15rem; font-style: italic; line-height: 1.45; }
+    .rq-box-earth p { font-size: .88rem; color: var(--muted-fg); line-height: 1.75; }
+
+    .workflow-steps { display: flex; flex-direction: column; gap: .75rem; }
+    .workflow-step {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1rem; border-radius: var(--radius); border: 1px solid var(--border);
+    }
+    .step-num {
+      width: 2rem; height: 2rem; border-radius: .5rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .workflow-step h4 { font-size: .9rem; font-family: 'Inter',sans-serif; font-weight: 600; margin-bottom: .2rem; }
+    .workflow-step p  { font-size: .82rem; color: var(--muted-fg); line-height: 1.6; }
+
+    .methods-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; }
+    .method-item { border-left: 2px solid rgba(61,122,46,.3); padding-left: 1.25rem; }
+    .method-item h4 { font-size: .9rem; font-weight: 600; font-family: 'Inter',sans-serif; margin-bottom: .3rem; }
+    .method-item p  { font-size: .85rem; color: var(--muted-fg); line-height: 1.7; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    th {
+      text-align: left; font-size: .68rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--muted-fg);
+      padding-bottom: .75rem; border-bottom: 1px solid var(--border);
+    }
+    td { padding: .75rem 0; border-bottom: 1px solid var(--border); color: var(--fg); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tfoot td { font-weight: 600; color: var(--primary); padding-top: .75rem; border-top: 2px solid var(--border); border-bottom: none; }
+    td:not(:last-child), th:not(:last-child) { padding-right: 1.25rem; }
+
+    .safety-alert {
+      display: flex; gap: .75rem; padding: 1rem 1.25rem;
+      border-radius: var(--radius); background: rgba(245,158,11,.08);
+      border: 1px solid rgba(245,158,11,.25); margin-bottom: 1.5rem;
+    }
+    .safety-alert svg { width: 1rem; height: 1rem; stroke: #f59e0b; fill: none; stroke-width: 2; flex-shrink: 0; margin-top: .1rem; stroke-linecap: round; stroke-linejoin: round; }
+    .safety-alert p { font-size: .85rem; color: var(--muted-fg); line-height: 1.65; }
+    html.dark .safety-alert { background: rgba(245,158,11,.06); }
+
+    /* ============================================================
+       TIMELINE
+    ============================================================ */
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: .45rem; top: .5rem; bottom: .5rem;
+      width: 1px; background: var(--border);
+    }
+    .timeline-item { position: relative; padding-bottom: 1.5rem; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      position: absolute; left: -1.65rem; top: .2rem;
+      width: 1.1rem; height: 1.1rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .timeline-dot svg { width: .9rem; height: .9rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .dot-done { color: var(--primary); }
+    .dot-now  { color: var(--earth); }
+    .dot-soon { color: var(--muted-fg); }
+    .dot-done svg { fill: var(--primary); }
+    .timeline-meta { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .25rem; }
+    .timeline-date { font-size: .75rem; color: var(--muted-fg); font-weight: 500; }
+    .timeline-cat {
+      font-size: .68rem; padding: .15rem .6rem; border-radius: 999px;
+      border: 1px solid; text-transform: capitalize;
+    }
+    .cat-milestone { background: var(--accent-bg); color: var(--accent-fg); border-color: rgba(61,122,46,.2); }
+    .cat-submission { background: rgba(59,130,246,.08); color: #2563eb; border-color: rgba(59,130,246,.2); }
+    .cat-meeting    { background: rgba(245,158,11,.08); color: #d97706; border-color: rgba(245,158,11,.2); }
+    .cat-experiment { background: rgba(16,185,129,.08); color: #059669; border-color: rgba(16,185,129,.2); }
+    html.dark .cat-submission { color: #93c5fd; }
+    html.dark .cat-meeting    { color: #fcd34d; }
+    html.dark .cat-experiment { color: #6ee7b7; }
+    .timeline-title { font-size: .9rem; font-weight: 600; font-family: 'Inter',sans-serif; color: var(--fg); margin-bottom: .2rem; }
+    .timeline-desc  { font-size: .82rem; color: var(--muted-fg); line-height: 1.6; }
+
+    /* ============================================================
+       PROGRESS LOG
+    ============================================================ */
+    #progress .progress-hint {
+      padding: 1rem 1.25rem; border-radius: var(--radius);
+      background: var(--muted); border: 1px solid var(--border);
+      font-size: .85rem; color: var(--muted-fg);
+      margin-bottom: 1.5rem; line-height: 1.65;
+    }
+    #progress .progress-hint strong { color: var(--fg); }
+    #progress .phase-legend {
+      display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem;
+    }
+
+    .entries-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .entry-card {
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--card); overflow: hidden;
+      border-left: 3px solid var(--primary);
+      background: linear-gradient(to right, rgba(61,122,46,.03), transparent 40%);
+    }
+    html.dark .entry-card { background: linear-gradient(to right, rgba(109,181,81,.04), var(--card) 40%); }
+
+    .entry-toggle {
+      width: 100%; text-align: left; padding: 1.25rem 1.5rem;
+      display: flex; align-items: flex-start; gap: 1rem;
+      background: none; border: none; cursor: pointer;
+      transition: background .15s;
+    }
+    .entry-toggle:hover { background: rgba(0,0,0,.02); }
+    html.dark .entry-toggle:hover { background: rgba(255,255,255,.02); }
+
+    .entry-date-col { flex-shrink: 0; text-align: center; width: 3rem; }
+    .entry-day  { font-family: 'Crimson Text',serif; font-size: 2rem; font-weight: 600; color: var(--primary); line-height: 1; }
+    .entry-mon  { font-size: .65rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted-fg); }
+    .entry-yr   { font-size: .65rem; color: var(--muted-fg); }
+
+    .entry-main { flex: 1; min-width: 0; }
+    .entry-meta { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+    .entry-week { font-size: .75rem; color: var(--muted-fg); }
+    .entry-title { font-size: 1.1rem; color: var(--fg); line-height: 1.3; text-align: left; }
+    .entry-preview { font-size: .85rem; color: var(--muted-fg); margin-top: .35rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .entry-chevron {
+      flex-shrink: 0; color: var(--muted-fg); margin-top: .25rem;
+      transition: transform .25s;
+    }
+    .entry-chevron.open { transform: rotate(180deg); }
+    .entry-chevron svg { width: 1rem; height: 1rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .entry-body {
+      display: none; padding: 0 1.5rem 1.5rem;
+      border-top: 1px solid rgba(0,0,0,.06);
+    }
+    html.dark .entry-body { border-top-color: rgba(255,255,255,.06); }
+    .entry-body.open { display: block; padding-top: 1.25rem; }
+
+    .entry-section-label {
+      font-size: .65rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted-fg); margin-bottom: .5rem;
+    }
+    .entry-text { font-size: .875rem; color: var(--fg); line-height: 1.75; margin-bottom: 1.25rem; }
+
+    .entry-env {
+      display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem;
+    }
+    .env-chip {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .4rem .75rem; border-radius: .5rem;
+      background: var(--muted); font-size: .8rem; font-weight: 500; color: var(--fg);
+    }
+    .env-chip svg { width: .85rem; height: .85rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .entry-images { display: flex; gap: .75rem; overflow-x: auto; padding-bottom: .5rem; margin-bottom: 1.25rem; }
+    .entry-images::-webkit-scrollbar { height: 4px; }
+    .entry-images::-webkit-scrollbar-track { background: var(--muted); border-radius: 2px; }
+    .entry-images::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .img-placeholder {
+      flex-shrink: 0; width: 8rem; height: 6rem;
+      border-radius: .75rem; overflow: hidden; position: relative;
+    }
+    .img-placeholder .img-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.25);
+    }
+    .img-placeholder .img-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: .4rem .5rem; color: rgba(255,255,255,.9);
+      font-size: .65rem; line-height: 1.3;
+    }
+
+    .entry-tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .entry-tag {
+      font-size: .72rem; color: var(--muted-fg);
+      display: flex; align-items: center; gap: .2rem;
+    }
+    .entry-tag svg { width: .65rem; height: .65rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ============================================================
+       GALLERY
+    ============================================================ */
+    #gallery .gallery-note {
+      padding: 1rem 1.25rem; border-radius: var(--radius);
+      background: var(--muted); border: 1px solid var(--border);
+      font-size: .85rem; color: var(--muted-fg);
+      margin-bottom: 2rem; line-height: 1.65;
+    }
+    #gallery .gallery-note strong { color: var(--fg); }
+
+    .masonry {
+      columns: 1; gap: 1rem;
+    }
+    @media (min-width: 540px) { .masonry { columns: 2; } }
+    @media (min-width: 900px) { .masonry { columns: 3; } }
+
+    .masonry-item {
+      break-inside: avoid; margin-bottom: 1rem;
+      border-radius: var(--radius-lg); overflow: hidden;
+      position: relative; cursor: pointer;
+    }
+    .masonry-item:hover .gallery-overlay { opacity: 1; }
+    .masonry-item:hover .gallery-caption { transform: translateY(0); }
+    .aspect-video { aspect-ratio: 16/9; }
+    .aspect-square { aspect-ratio: 1; }
+    .aspect-portrait { aspect-ratio: 3/4; }
+
+    .gallery-overlay {
+      position: absolute; inset: 0; opacity: 0;
+      background: rgba(0,0,0,.28); transition: opacity .3s;
+    }
+    .gallery-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: .75rem 1rem;
+      background: linear-gradient(to top, rgba(0,0,0,.7), transparent);
+      transform: translateY(2px); transition: transform .3s;
+    }
+    .gallery-caption p { color: #fff; font-size: .82rem; line-height: 1.35; }
+    .gallery-caption span { color: rgba(255,255,255,.6); font-size: .72rem; }
+
+    /* ============================================================
+       RESULTS
+    ============================================================ */
+    #results .pending-state {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 4rem 0;
+    }
+    .pending-icon {
+      width: 4rem; height: 4rem; border-radius: var(--radius-lg);
+      background: var(--muted); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .pending-icon svg { width: 2rem; height: 2rem; stroke: var(--muted-fg); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .pending-state h2 { font-size: 1.75rem; margin-bottom: .75rem; }
+    .pending-state p  { font-size: .9rem; color: var(--muted-fg); max-width: 36rem; line-height: 1.7; }
+
+    .results-grid { display: grid; gap: 1rem; margin: 2.5rem 0; }
+    @media (min-width: 768px) { .results-grid { grid-template-columns: 1fr 1fr; } }
+
+    .status-badge { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem .65rem; border-radius: 999px; font-size: .72rem; font-weight: 500; }
+    .status-pending { background: var(--muted); color: var(--muted-fg); border: 1px solid var(--border); }
+
+    /* ============================================================
+       MENTORS
+    ============================================================ */
+    .mentor-card { padding: 1.75rem; height: 100%; display: flex; flex-direction: column; gap: 1.25rem; }
+    .mentor-header { display: flex; gap: 1rem; align-items: flex-start; }
+    .mentor-avatar {
+      width: 3.5rem; height: 3.5rem; border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .mentor-avatar span { color: #fff; font-family: 'Crimson Text',serif; font-size: 1.5rem; font-weight: 600; }
+    .mentor-name { font-size: 1.1rem; line-height: 1.2; margin-bottom: .2rem; }
+    .mentor-title { font-size: .82rem; color: var(--muted-fg); margin-bottom: .35rem; }
+    .mentor-inst { display: flex; align-items: center; gap: .35rem; font-size: .75rem; color: var(--muted-fg); }
+    .mentor-inst svg { width: .75rem; height: .75rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .mentor-role-badge {
+      display: inline-flex; align-items: center; padding: .375rem .75rem;
+      border-radius: .5rem; background: var(--accent-bg);
+      border: 1px solid rgba(61,122,46,.15);
+      font-size: .78rem; font-weight: 500; color: var(--accent-fg);
+    }
+    .mentor-bio { font-size: .85rem; color: var(--muted-fg); line-height: 1.75; }
+    .mentor-contributions h4 { font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--fg); margin-bottom: .75rem; }
+    .mentor-contributions ul { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    .mentor-contributions li { display: flex; gap: .6rem; align-items: flex-start; font-size: .83rem; color: var(--muted-fg); line-height: 1.55; }
+    .mentor-contributions li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: .45rem; }
+    .mentor-dept { font-size: .75rem; color: var(--muted-fg); padding-top: 1rem; border-top: 1px solid var(--border); margin-top: auto; }
+
+    .acknowledgment {
+      margin-top: 3rem; padding: 2rem; border-radius: var(--radius-lg);
+      background: var(--muted); border: 1px solid var(--border);
+    }
+    .acknowledgment h3 { font-size: 1.2rem; margin-bottom: .75rem; }
+    .acknowledgment p  { font-size: .87rem; color: var(--muted-fg); line-height: 1.75; }
+    .acknowledgment p + p { margin-top: .75rem; }
+
+    /* ============================================================
+       FAQ
+    ============================================================ */
+    .faq-category { margin-bottom: 3rem; }
+    .faq-cat-title { font-size: 1.35rem; margin-bottom: .35rem; }
+    .faq-cat-desc  { font-size: .85rem; color: var(--muted-fg); margin-bottom: 1.25rem; }
+
+    .faq-item {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--card); overflow: hidden; margin-bottom: .5rem;
+      transition: border-color .2s, background .2s;
+    }
+    .faq-item.open { border-color: rgba(61,122,46,.3); background: var(--accent-bg); }
+
+    .faq-question {
+      width: 100%; text-align: left; padding: 1.1rem 1.25rem;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+      background: none; border: none; cursor: pointer;
+      font-size: .9rem; font-weight: 500; color: var(--fg);
+      line-height: 1.5;
+    }
+    .faq-question svg { flex-shrink: 0; width: 1rem; height: 1rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; color: var(--muted-fg); margin-top: .15rem; transition: color .2s; }
+    .faq-item.open .faq-question svg { color: var(--primary); }
+
+    .faq-answer {
+      display: none; padding: 0 1.25rem 1.25rem;
+      border-top: 1px solid rgba(61,122,46,.1);
+    }
+    .faq-item.open .faq-answer { display: block; padding-top: 1rem; }
+    .faq-answer p { font-size: .875rem; color: var(--muted-fg); line-height: 1.8; }
+
+    .faq-still-have {
+      text-align: center; padding: 2.5rem 1.5rem;
+      border-radius: var(--radius-lg); background: var(--accent-bg);
+      border: 1px solid rgba(61,122,46,.2); margin-top: 3rem;
+    }
+    .faq-still-have h3 { font-size: 1.35rem; margin-bottom: .5rem; }
+    .faq-still-have p  { font-size: .88rem; color: var(--muted-fg); margin-bottom: 1.25rem; }
+
+    /* ============================================================
+       REFERENCES
+    ============================================================ */
+    .pub-highlight {
+      padding: 1.5rem 1.75rem; border-radius: var(--radius-lg);
+      border: 2px solid rgba(61,122,46,.35); background: var(--accent-bg);
+      margin-bottom: 2.5rem;
+    }
+    .pub-highlight .pub-label { font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--primary); margin-bottom: .5rem; }
+    .pub-highlight p { font-size: .9rem; color: var(--fg); line-height: 1.75; }
+
+    .ref-group { margin-bottom: 2.5rem; }
+    .ref-group-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+    .ref-group-title { font-size: 1.35rem; }
+    .ref-count { font-size: .72rem; padding: .15rem .6rem; border-radius: 999px; font-weight: 500; border: 1px solid; }
+    .ref-journal { background: rgba(59,130,246,.08); color: #2563eb; border-color: rgba(59,130,246,.25); }
+    .ref-report  { background: rgba(139,92,246,.08); color: #7c3aed; border-color: rgba(139,92,246,.25); }
+    .ref-website { background: rgba(16,185,129,.08); color: #059669; border-color: rgba(16,185,129,.25); }
+    html.dark .ref-journal { color: #93c5fd; }
+    html.dark .ref-report  { color: #c4b5fd; }
+    html.dark .ref-website { color: #6ee7b7; }
+
+    .ref-list { display: flex; flex-direction: column; gap: .5rem; }
+    .ref-item {
+      display: flex; gap: 1rem; padding: 1rem 1.25rem;
+      border-radius: var(--radius); border: 1px solid var(--border);
+      background: var(--card); transition: background .15s;
+    }
+    .ref-item:hover { background: var(--muted); }
+    .ref-num {
+      flex-shrink: 0; width: 1.75rem; height: 1.75rem; border-radius: .4rem;
+      background: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-family: monospace; color: var(--muted-fg);
+    }
+    .ref-cite { font-size: .87rem; color: var(--fg); line-height: 1.65; }
+    .ref-doi { display: inline-flex; align-items: center; gap: .25rem; font-size: .78rem; color: var(--primary); margin-top: .3rem; transition: opacity .15s; }
+    .ref-doi:hover { opacity: .75; }
+    .ref-doi svg { width: .75rem; height: .75rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    #contact .contact-grid {
+      display: grid; gap: 3rem;
+    }
+    @media (min-width: 768px) { #contact .contact-grid { grid-template-columns: 2fr 3fr; } }
+
+    .contact-info-item { display: flex; align-items: flex-start; gap: .75rem; margin-bottom: 1.25rem; }
+    .contact-info-item svg { width: 1rem; height: 1rem; stroke: var(--muted-fg); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; margin-top: .15rem; flex-shrink: 0; }
+    .contact-info-item .ci-label { font-size: .72rem; font-weight: 600; color: var(--fg); margin-bottom: .15rem; }
+    .contact-info-item .ci-value { font-size: .87rem; color: var(--muted-fg); }
+
+    .contact-person {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .75rem 1rem; border-radius: var(--radius);
+      background: var(--muted); border: 1px solid var(--border); margin-bottom: .75rem;
+    }
+    .cp-avatar {
+      width: 2.25rem; height: 2.25rem; border-radius: .5rem;
+      background: var(--accent-bg); display: flex; align-items: center; justify-content: center;
+    }
+    .cp-avatar span { font-family: 'Crimson Text',serif; font-size: 1.1rem; font-weight: 600; color: var(--primary); }
+    .cp-name { font-size: .9rem; font-weight: 600; color: var(--fg); }
+    .cp-role { font-size: .75rem; color: var(--muted-fg); }
+
+    .form-card { padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card); }
+    .form-card h3 { font-size: 1.35rem; margin-bottom: 1.5rem; }
+
+    .form-row { display: grid; gap: 1rem; margin-bottom: 1rem; }
+    @media (min-width: 480px) { .form-row { grid-template-columns: 1fr 1fr; } }
+    .form-field { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+    .form-field label { font-size: .85rem; font-weight: 500; color: var(--fg); }
+    .form-field label .req { color: var(--primary); }
+    .form-field input, .form-field textarea {
+      padding: .65rem 1rem; border-radius: .6rem;
+      border: 1px solid var(--border); background: var(--card); color: var(--fg);
+      font-family: 'Inter', sans-serif; font-size: .9rem;
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+    .form-field input:focus, .form-field textarea:focus {
+      outline: none; border-color: rgba(61,122,46,.5);
+      box-shadow: 0 0 0 3px rgba(61,122,46,.1);
+    }
+    .form-field input::placeholder, .form-field textarea::placeholder { color: var(--muted-fg); }
+    .form-field textarea { resize: vertical; min-height: 7rem; }
+
+    .form-success {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 3rem 2rem;
+    }
+    .form-success-icon {
+      width: 3.5rem; height: 3.5rem; border-radius: 50%;
+      background: var(--accent-bg); display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .form-success-icon svg { width: 1.75rem; height: 1.75rem; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .form-success h3 { font-size: 1.35rem; margin-bottom: .5rem; }
+    .form-success p  { font-size: .87rem; color: var(--muted-fg); max-width: 24rem; line-height: 1.7; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--muted); padding: 4rem 0 2.5rem;
+      margin-top: 2rem;
+    }
+    .footer-grid {
+      display: grid; gap: 3rem; margin-bottom: 3rem;
+    }
+    @media (min-width: 640px)  { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
+
+    .footer-brand { max-width: 20rem; }
+    .footer-logo { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+    .footer-logo-icon { width: 2rem; height: 2rem; border-radius: .5rem; background: rgba(61,122,46,.1); display: flex; align-items: center; justify-content: center; }
+    .footer-logo-icon svg { width: 1rem; height: 1rem; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .footer-logo-name { font-family: 'Crimson Text',serif; font-size: 1.2rem; font-weight: 600; }
+    .footer-desc { font-size: .85rem; color: var(--muted-fg); line-height: 1.7; margin-bottom: 1.25rem; }
+    .footer-meta { font-size: .78rem; color: var(--muted-fg); line-height: 1.8; }
+    .footer-meta strong { color: var(--fg); }
+
+    .footer-col h3 { font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--fg); margin-bottom: 1rem; font-family: 'Inter',sans-serif; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    .footer-col a { font-size: .87rem; color: var(--muted-fg); transition: color .15s; }
+    .footer-col a:hover { color: var(--fg); }
+
+    .footer-bottom {
+      padding-top: 2rem; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      justify-content: space-between; align-items: center;
+    }
+    .footer-bottom p { font-size: .78rem; color: var(--muted-fg); }
+
+    /* Footer new layout classes */
+    .site-footer { border-top: 1px solid var(--border); background: var(--muted); padding: 4rem 0 2.5rem; margin-top: 2rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: grid; gap: 3rem; margin-bottom: 3rem; }
+    @media (min-width: 768px) { .footer-inner { grid-template-columns: 2fr 3fr; } }
+    .footer-logo { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; font-family: 'Crimson Text',serif; font-size: 1.25rem; font-weight: 600; color: var(--fg); }
+    .footer-logo svg { width: 2rem; height: 2rem; }
+    .footer-brand p { font-size: .85rem; color: var(--muted-fg); line-height: 1.75; margin-bottom: 1.25rem; }
+    .footer-tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .footer-tags span { font-size: .72rem; color: var(--muted-fg); background: var(--card); border: 1px solid var(--border); padding: .2rem .6rem; border-radius: 99px; }
+    .footer-nav-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .footer-col-title { font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--fg); margin-bottom: 1rem; }
+    .footer-col a { display: block; font-size: .87rem; color: var(--muted-fg); margin-bottom: .6rem; transition: color .15s; }
+    .footer-col a:hover { color: var(--fg); }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 0; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; }
+    .footer-bottom span { font-size: .78rem; color: var(--muted-fg); }
+
+    /* ============================================================
+       SCROLL REVEAL ANIMATIONS
+    ============================================================ */
+    .reveal {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: .08s; }
+    .reveal-delay-2 { transition-delay: .16s; }
+    .reveal-delay-3 { transition-delay: .24s; }
+    .reveal-delay-4 { transition-delay: .32s; }
+
+    /* ============================================================
+       UTILITIES
+    ============================================================ */
+    .text-primary  { color: var(--primary); }
+    .text-earth    { color: var(--earth); }
+    .text-muted    { color: var(--muted-fg); }
+    .text-sm       { font-size: .875rem; }
+    .text-xs       { font-size: .78rem; }
+    .italic        { font-style: italic; }
+    .mt-2  { margin-top: .5rem; }
+    .mt-4  { margin-top: 1rem; }
+    .mt-6  { margin-top: 1.5rem; }
+    .mt-8  { margin-top: 2rem; }
+    .mb-4  { margin-bottom: 1rem; }
+    .mb-6  { margin-bottom: 1.5rem; }
+    .mb-8  { margin-bottom: 2rem; }
+    .flex  { display: flex; }
+    .items-center { align-items: center; }
+    .gap-2 { gap: .5rem; }
+    .gap-3 { gap: .75rem; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     SCROLL PROGRESS
+============================================================ -->
+<div id="scroll-progress"></div>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<header id="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+      </div>
+      MycoPod
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#progress">Progress Log</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#mentors">Mentors</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#references">References</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark mode">
+        <svg id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="icon-sun" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <a href="#contact" class="btn-primary-sm">Contact</a>
+      <button class="btn-icon" id="menu-toggle" aria-label="Menu">
+        <svg id="icon-menu" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="icon-close" viewBox="0 0 24 24" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<nav id="mobile-menu">
+  <a href="#about">About</a>
+  <a href="#research">Research</a>
+  <a href="#progress">Progress Log</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#results">Results</a>
+  <a href="#mentors">Mentors</a>
+  <a href="#faq">FAQ</a>
+  <a href="#references">References</a>
+  <a href="#contact" class="mobile-cta">Contact</a>
+</nav>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="home">
+  <div class="hero-map-overlay"></div>
+  <canvas id="mycelium-canvas"></canvas>
+  <div class="hero-vignette"></div>
+
+  <div class="hero-content">
+    <div class="hero-meta">
+      <div class="hero-meta-item earth">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Altadena, California
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item green">
+        <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+        In Collaboration with Caltech
+      </div>
+    </div>
+
+    <h1 class="hero-title font-serif">
+      Myco<span class="gradient-text">Pod</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Exploring fungal bioremediation for wildfire-contaminated soil.
+    </p>
+    <p class="hero-sub2">
+      Investigating whether <em>Pleurotus ostreatus</em> (oyster mushrooms) can sequester
+      lead from soil contaminated by the 2025 Eaton Fire in Altadena, CA.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="#research" class="btn-primary">
+        View Research Design
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#progress" class="btn-secondary">Progress Log</a>
+    </div>
+
+    <div class="hero-tags">
+      <span class="hero-tag">Mycoremediation</span>
+      <span class="hero-tag">Pleurotus ostreatus</span>
+      <span class="hero-tag">ICP-MS Analysis</span>
+      <span class="hero-tag">Eaton Fire Response</span>
+      <span class="hero-tag">Lead Contamination</span>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+</section>
+
+<!-- ============================================================
+     STATS
+============================================================ -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="reveal">
+        <div class="stat-value">2025</div>
+        <div class="stat-label">Eaton Fire</div>
+        <div class="stat-desc">Year the wildfire contaminated Altadena soils with lead and PAHs</div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <div class="stat-value">ICP-MS</div>
+        <div class="stat-label">Analysis Method</div>
+        <div class="stat-desc">Parts-per-million precision analysis via Caltech's mass spectrometry lab</div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="stat-value">2</div>
+        <div class="stat-label">Caltech Professors</div>
+        <div class="stat-desc">Collaborating with geochemistry and environmental microbiology faculty</div>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div class="stat-value">Iter. 1</div>
+        <div class="stat-label">Proof of Concept</div>
+        <div class="stat-desc">First experimental run to validate fungal lead sequestration in field conditions</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PLACEHOLDER SECTIONS (filled in Parts 2–5)
+============================================================ -->
+
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Background</span>
+      <h2 class="section-title">From Wildfire to Research</h2>
+      <p class="section-desc">The 2025 Eaton Fire left more than structural damage — it contaminated residential soils with lead and other toxins. MycoPod investigates whether fungi can help.</p>
+    </div>
+
+    <div class="researchers">
+      <div class="researcher-card reveal">
+        <div class="name">Arjun Singh</div>
+        <div class="role">Co-Researcher</div>
+        <div class="inst">The Polytechnic School, '26</div>
+      </div>
+      <div class="researcher-card reveal reveal-delay-1">
+        <div class="name">Remick Techentin</div>
+        <div class="role">Co-Researcher</div>
+        <div class="inst">The Polytechnic School, '26</div>
+      </div>
+    </div>
+
+    <div class="about-grid">
+      <div class="card about-card reveal">
+        <div class="about-icon-wrap icon-fire">
+          <svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        </div>
+        <h3>The 2025 Eaton Fire</h3>
+        <p>In January 2025, the Eaton Fire swept through Altadena, California — a historic, densely populated community in the foothills of the San Gabriel Mountains. The fire destroyed hundreds of homes and released toxic ash that settled into residential soils.</p>
+        <p>Among the most concerning consequences was contamination by heavy metals — particularly lead, commonly used in paint and plumbing in older homes throughout the area — as well as polycyclic aromatic hydrocarbons (PAHs) from combustion of organic materials.</p>
+      </div>
+
+      <div class="card about-card reveal reveal-delay-1">
+        <div class="about-icon-wrap icon-alert">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3>Why Lead Contamination Matters</h3>
+        <p>Lead is a potent neurotoxin with no safe level of exposure. It is particularly dangerous for children, causing irreversible neurological damage and developmental delays. The California screening level is 80 ppm; the EPA screening level is 200 ppm; hazardous waste begins near 1,000 ppm.</p>
+        <p>Traditional remediation — soil excavation and disposal — is expensive, disruptive, and simply relocates contamination to landfills. Less invasive, in-situ approaches are urgently needed.</p>
+      </div>
+
+      <div class="card about-card reveal reveal-delay-2">
+        <div class="about-icon-wrap icon-flask">
+          <svg viewBox="0 0 24 24"><path d="M9 3h6m-5 0v8.5L5 21h14l-5-9.5V3"/><circle cx="9.5" cy="15.5" r=".5" fill="currentColor"/><circle cx="14" cy="17" r=".5" fill="currentColor"/></svg>
+        </div>
+        <h3>What is Mycoremediation?</h3>
+        <p>Mycoremediation is the use of fungi to degrade or sequester environmental contaminants. Fungi interact with metals through biosorption (passive binding to cell wall chitin), bioaccumulation (active intracellular uptake), and bioprecipitation (converting dissolved ions into insoluble forms).</p>
+        <p>The mycelium — the vast thread-like root network — creates enormous surface area that interacts with soil particles and pore water, making it a uniquely effective biological sorbent.</p>
+      </div>
+
+      <div class="card about-card reveal reveal-delay-3">
+        <div class="about-icon-wrap icon-leaf">
+          <svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+        </div>
+        <h3>Why Oyster Mushrooms?</h3>
+        <p><em>Pleurotus ostreatus</em> (oyster mushrooms) were chosen because they are among the most extensively studied species in mycoremediation research, with documented heavy metal bioaccumulation. They are commercially available as grain spawn, relatively fast-growing, hardy in outdoor conditions, and non-pathogenic.</p>
+        <p>While this first iteration focuses on oyster mushrooms, future iterations may test additional species with different metal-binding profiles.</p>
+      </div>
+    </div>
+
+    <div class="pub-callout reveal">
+      <div class="pub-label">Published Research</div>
+      <h3>Genomics Insights Review Article</h3>
+      <p>Singh, A., Techentin, R., &amp; S., [Dr.]. (2026). <em>Mycoremediation as a Strategy for Heavy Metal Sequestration in Wildfire-Affected Soils: A Review.</em> Genomics Insights, 19.</p>
+    </div>
+  </div>
+</section>
+
+<section id="research" class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Experimental Design</span>
+      <h2 class="section-title">The Science of MycoPod</h2>
+      <p class="section-desc">A proof-of-concept investigation into whether <em>Pleurotus ostreatus</em> can sequester lead from Eaton Fire–contaminated soil under real outdoor conditions.</p>
+    </div>
+
+    <!-- Research question + hypothesis -->
+    <div class="rq-grid reveal">
+      <div class="rq-box rq-box-primary">
+        <div class="rq-box-label">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Research Question
+        </div>
+        <p class="rq-title font-serif">Can <em>Pleurotus ostreatus</em> (oyster mushrooms) sequester lead from soil contaminated by wildfire ash under outdoor field conditions?</p>
+      </div>
+      <div class="rq-box rq-box-earth">
+        <div class="rq-box-label" style="color:var(--earth)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Hypothesis
+        </div>
+        <p>If oyster mushroom mycelium is inoculated into lead-contaminated soil from the Eaton Fire site, the post-experiment ICP-MS analysis will show a measurable reduction in soil lead concentration compared to the baseline, indicating sequestration of lead into fungal biomass.</p>
+      </div>
+    </div>
+
+    <!-- Experimental workflow -->
+    <div class="card reveal mb-8">
+      <div class="card-body">
+        <h3 class="font-serif mb-6" style="font-size:1.35rem">Experimental Workflow</h3>
+        <div class="workflow-steps">
+          <div class="workflow-step" style="background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.2)">
+            <div class="step-num" style="background:#f59e0b">01</div>
+            <div><h4>Soil Collection</h4><p>Collect contaminated soil from Eaton Fire–affected site in Altadena, CA. Homogenize on a tarp for uniform lead distribution.</p></div>
+          </div>
+          <div class="workflow-step" style="background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.2)">
+            <div class="step-num" style="background:#3b82f6">02</div>
+            <div><h4>Baseline ICP-MS</h4><p>Submit soil aliquots to Professor Tissot's Caltech lab for parts-per-million lead concentration measurement before any inoculation.</p></div>
+          </div>
+          <div class="workflow-step" style="background:var(--accent-bg);border-color:rgba(61,122,46,.2)">
+            <div class="step-num" style="background:var(--primary)">03</div>
+            <div><h4>Inoculation</h4><p>Layer <em>Pleurotus ostreatus</em> grain spawn with contaminated soil in two 7-gallon outdoor bins using a layering technique.</p></div>
+          </div>
+          <div class="workflow-step" style="background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.2)">
+            <div class="step-num" style="background:#10b981">04</div>
+            <div><h4>Growth Monitoring</h4><p>Monitor fungal growth daily — recording temperature, humidity, and visual observations. Photograph bins at consistent angles.</p></div>
+          </div>
+          <div class="workflow-step" style="background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.2)">
+            <div class="step-num" style="background:#8b5cf6">05</div>
+            <div><h4>Post-Experiment ICP-MS</h4><p>After the growth phase, submit new soil aliquots from each bin to Caltech for a second round of lead concentration measurement.</p></div>
+          </div>
+          <div class="workflow-step" style="background:rgba(184,131,78,.08);border-color:rgba(184,131,78,.2)">
+            <div class="step-num" style="background:var(--earth)">06</div>
+            <div><h4>Analysis &amp; Comparison</h4><p>Compare before/after ICP-MS data. Calculate percent change and consult Professor Leadbetter and Professor Tissot for interpretation.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Materials table -->
+    <div class="card reveal mb-8">
+      <div class="card-body">
+        <h3 class="font-serif mb-6" style="font-size:1.35rem">Materials &amp; Budget (~$340 total)</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><em>Pleurotus ostreatus</em> Grain Spawn</td><td>2 bags</td><td>Primary inoculant</td></tr>
+              <tr><td>Organic Straw</td><td>5 lb</td><td>Supplemental substrate</td></tr>
+              <tr><td>7-gallon Bins (experimental)</td><td>2</td><td>Replicate experimental units</td></tr>
+              <tr><td>17-gallon Bin</td><td>1</td><td>Soil homogenization</td></tr>
+              <tr><td>Digital Hygrometer</td><td>2</td><td>Temperature &amp; humidity monitoring</td></tr>
+              <tr><td>Lead Inspection Strips (soil)</td><td>1 kit</td><td>Field-level lead screening</td></tr>
+              <tr><td>Tarp, Shovel, Misc. supplies</td><td>—</td><td>Collection &amp; setup</td></tr>
+              <tr><td>N95 Masks &amp; Nitrile Gloves</td><td>Multiple</td><td>Respiratory &amp; hand protection</td></tr>
+              <tr><td>ICP-MS Analysis (Caltech)</td><td>2 runs</td><td>Baseline + post-experiment</td></tr>
+            </tbody>
+            <tfoot><tr><td colspan="2">Estimated Total</td><td style="color:var(--primary)">~$340</td></tr></tfoot>
+          </table>
+        </div>
+        <p class="text-xs text-muted mt-4">* ICP-MS analysis costs covered through collaboration with Professor Tissot's Caltech laboratory.</p>
+      </div>
+    </div>
+
+    <!-- Safety -->
+    <div class="card reveal mb-8">
+      <div class="card-body">
+        <h3 class="font-serif mb-4" style="font-size:1.35rem">Safety Considerations</h3>
+        <div class="safety-alert">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <p>All safety protocols were developed in consultation with Professor Jared Leadbetter (environmental microbiology, Caltech) and Professor François Tissot (geochemistry, Caltech).</p>
+        </div>
+        <ul class="methods-list">
+          <li class="method-item"><h4>Lead Soil Thresholds</h4><p>California screening level: 80 ppm (all normal activities permitted). EPA level: 200 ppm (wash hands after contact). Hazardous waste threshold: ~1,000 ppm. We are targeting soil in the 200–500 ppm range, confirmed with Professor Tissot.</p></li>
+          <li class="method-item"><h4>Personal Protective Equipment</h4><p>N95 respirators during all soil handling, collection, and inoculation. Nitrile gloves and eye protection worn at all times when in contact with contaminated soil.</p></li>
+          <li class="method-item"><h4>Experiment Location</h4><p>Per Professor Leadbetter's recommendation, the experiment is conducted outdoors in a non-moisture-controlled environment to prevent fungal pathogen buildup. Bins are kept out of direct sunlight.</p></li>
+          <li class="method-item"><h4>Containment &amp; Disposal</h4><p>Bins are covered with breathable fabric. Post-experiment mushrooms and soil will not be consumed and will be disposed of following appropriate protocols for lead-contaminated biological waste.</p></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card reveal">
+      <div class="card-body">
+        <h3 class="font-serif mb-6" style="font-size:1.35rem">Project Timeline</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">September 2025</span><span class="timeline-cat cat-milestone">Milestone</span></div>
+            <div class="timeline-title">Project Inception</div>
+            <div class="timeline-desc">Initial concept for fungal bioremediation of Eaton Fire–affected soils. Research into <em>Pleurotus ostreatus</em> begins.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">November 2025</span><span class="timeline-cat cat-submission">Submission</span></div>
+            <div class="timeline-title">MIT Think Challenge Submission</div>
+            <div class="timeline-desc">Submitted proposal for a hydrogel-encapsulated fungal spawn system for lead sequestration.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">January 2026</span><span class="timeline-cat cat-submission">Submission</span></div>
+            <div class="timeline-title">Earth Prize Application</div>
+            <div class="timeline-desc">Submitted application with refined experimental design and environmental impact framework.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">February 2026</span><span class="timeline-cat cat-milestone">Milestone</span></div>
+            <div class="timeline-title">Genomics Insights Publication</div>
+            <div class="timeline-desc">Review article on mycoremediation for wildfire-affected soil decontamination published.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">March 2026</span><span class="timeline-cat cat-meeting">Meeting</span></div>
+            <div class="timeline-title">Caltech Watson Lecture — Professor Tissot</div>
+            <div class="timeline-desc">Attended Professor Tissot's talk on Eaton Fire lead contamination. He agreed to provide ICP-MS analysis through his Caltech lab.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">April 2026</span><span class="timeline-cat cat-meeting">Meeting</span></div>
+            <div class="timeline-title">Meeting with Professor Leadbetter</div>
+            <div class="timeline-desc">Simplified experimental design to remove hydrogel for the first proof-of-concept iteration. Safety protocols established.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">April 25, 2026</span><span class="timeline-cat cat-submission">Submission</span></div>
+            <div class="timeline-title">Sabrina Zhang Prize Application</div>
+            <div class="timeline-desc">Submitted application to The Sabrina Zhang '23 Prize for Interdisciplinary Entrepreneurship at The Polytechnic School.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">June 10, 2026</span><span class="timeline-cat cat-meeting">Meeting</span></div>
+            <div class="timeline-title">Experiment Site Confirmed — Freshman Patio</div>
+            <div class="timeline-desc">Remick met with Ms. Fleming; a corner of the freshman patio at The Polytechnic School was selected as the experiment site.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">June 12, 2026</span><span class="timeline-cat cat-experiment">Experiment</span></div>
+            <div class="timeline-title">Soil Collection &amp; Test Strip Pivot</div>
+            <div class="timeline-desc">Collected soil from four sites (Callum's, Hudson's, behind Hudson's, Stella's). Discovered purchased test strips detect all heavy metals — not lead specifically. Arjun's unaffected backyard returned a false positive, confirming the issue. Pivoted to ICP-MS; emailed Professor Tissot the same day.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">June 12–19, 2026</span><span class="timeline-cat cat-meeting">Meeting</span></div>
+            <div class="timeline-title">Caltech Coordination — ICP-MS Arranged</div>
+            <div class="timeline-desc">Prof. Tissot brought graduate students Merritt McDowell and Priscilla Boo into the conversation. They agreed to run ICP-MS on all five soil samples.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">July 1–2, 2026</span><span class="timeline-cat cat-experiment">Experiment</span></div>
+            <div class="timeline-title">Fifth Sample Collected; All Samples Submitted to Caltech</div>
+            <div class="timeline-desc">Collected final sample from Mia G's house and homogenized all five samples. Arjun delivered samples to Priscilla Boo at Caltech on July 2 for ICP-MS preparation.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-now"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">Pending · July 2026</span><span class="timeline-cat cat-experiment">Experiment</span></div>
+            <div class="timeline-title">ICP-MS Results &amp; Soil Selection — In Progress</div>
+            <div class="timeline-desc">Awaiting ICP-MS results from Priscilla Boo's lab prep. Results will determine which site has the highest lead concentration and becomes the experimental soil.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-soon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">July–August 2026</span><span class="timeline-cat cat-experiment">Experiment</span></div>
+            <div class="timeline-title">Inoculation, Growth Monitoring &amp; Post-Experiment ICP-MS</div>
+            <div class="timeline-desc">Inoculate selected soil with <em>Pleurotus ostreatus</em>, monitor daily, then submit post-experiment samples to Caltech for comparison ICP-MS.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot dot-soon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>
+            <div class="timeline-meta"><span class="timeline-date">August 2026</span><span class="timeline-cat cat-milestone">Milestone</span></div>
+            <div class="timeline-title">Results &amp; Presentation</div>
+            <div class="timeline-desc">Analyze results, compile findings, and present to the prize committee. Share significant results with Caltech collaborators.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="progress" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Research Notebook</span>
+      <h2 class="section-title">Daily Progress Log</h2>
+      <p class="section-desc">A living record of every observation, measurement, and photo from the experiment. Updated daily.</p>
+    </div>
+
+    <div class="progress-hint reveal">
+      <strong>Adding entries:</strong> Each card below is written directly into this HTML file. To add a new entry, copy any <code>.entry-card</code> block and update its content. Image placeholders are gradient divs — swap them for real <code>&lt;img&gt;</code> tags as photos are taken.
+    </div>
+
+    <div class="phase-legend reveal">
+      <span class="badge badge-preparation">Preparation</span>
+      <span class="badge badge-inoculation">Inoculation</span>
+      <span class="badge badge-growth">Growth</span>
+      <span class="badge badge-measurement">Measurement</span>
+      <span class="badge badge-analysis">Analysis</span>
+    </div>
+
+    <div class="entries-list">
+
+      <!-- Entry 6 — most recent first: July 2 -->
+      <div class="entry-card reveal">
+        <button class="entry-toggle">
+          <div class="entry-date-col">
+            <div class="entry-day">2</div>
+            <div class="entry-mon">Jul</div>
+            <div class="entry-yr">2026</div>
+          </div>
+          <div class="entry-main">
+            <div class="entry-meta"><span class="badge badge-measurement">Measurement</span></div>
+            <div class="entry-title font-serif">Samples Dropped Off at Caltech — ICP-MS Prep Begins</div>
+            <div class="entry-preview">Arjun delivered the five soil samples to Priscilla Boo, graduate student in Prof. Tissot's lab, for ICP-MS preparation. Results pending.</div>
+          </div>
+          <div class="entry-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </button>
+        <div class="entry-body">
+          <div class="entry-section-label">What Happened</div>
+          <div class="entry-text">Arjun dropped off all five soil samples to Priscilla Boo, a graduate student in Professor Tissot's lab, so she can begin preparing for the ICP-MS analysis. This marks the transition from field collection to quantitative laboratory measurement. We are now waiting on the ICP-MS results to determine which soil sample has the highest lead concentration — that sample will be selected for the main experiment.</div>
+          <div class="entry-section-label">What's Next</div>
+          <div class="entry-text">Priscilla will run ICP-MS on our five samples. Once we have those results, we'll select the optimal soil and move forward with inoculation. We expect results soon.</div>
+          <div class="entry-images">
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8)"><div class="img-overlay"></div><div class="img-caption">Caltech lab drop-off — samples handed to Priscilla Boo</div></div>
+          </div>
+          <div class="entry-tags">
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>icp-ms</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>caltech</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>priscilla-boo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 5: July 1 -->
+      <div class="entry-card reveal reveal-delay-1">
+        <button class="entry-toggle">
+          <div class="entry-date-col">
+            <div class="entry-day">1</div>
+            <div class="entry-mon">Jul</div>
+            <div class="entry-yr">2026</div>
+          </div>
+          <div class="entry-main">
+            <div class="entry-meta"><span class="badge badge-preparation">Preparation</span></div>
+            <div class="entry-title font-serif">Sample 5 Collected at Mia's — All Samples Homogenized</div>
+            <div class="entry-preview">Went to Mia G's house to collect the fifth and final soil sample. Also homogenized the four previously collected samples in preparation for ICP-MS drop-off.</div>
+          </div>
+          <div class="entry-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </button>
+        <div class="entry-body">
+          <div class="entry-section-label">What Happened</div>
+          <div class="entry-text">Went to Mia G's house to collect the fifth and final soil sample for our ICP-MS screening panel. We also homogenized the four previously collected samples (Callum's, Hudson's, the plot behind Hudson's house, and Stella's) to ensure each sample is uniform and representative before analysis.</div>
+          <div class="entry-section-label">Notes</div>
+          <div class="entry-text">All five samples are now collected and prepared. They will be dropped off at Caltech tomorrow for Priscilla to begin ICP-MS preparation.</div>
+          <div class="entry-images">
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#78350f,#c2410c)"><div class="img-overlay"></div><div class="img-caption">Soil sample collected at Mia G's house</div></div>
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#92400e,#b45309)"><div class="img-overlay"></div><div class="img-caption">Homogenizing samples for ICP-MS</div></div>
+          </div>
+          <div class="entry-tags">
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>soil-collection</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>homogenization</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>sample-5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 4: Jun 22–26 -->
+      <div class="entry-card reveal reveal-delay-2">
+        <button class="entry-toggle">
+          <div class="entry-date-col">
+            <div class="entry-day">22</div>
+            <div class="entry-mon">Jun</div>
+            <div class="entry-yr">2026</div>
+          </div>
+          <div class="entry-main">
+            <div class="entry-meta"><span class="badge badge-preparation">Preparation</span></div>
+            <div class="entry-title font-serif">Jun 22–26 — Awaiting Priscilla's Return from Vacation</div>
+            <div class="entry-preview">ICP-MS analysis on hold while Priscilla Boo is away. Plan to visit Mia G's house this week to collect the fifth soil sample.</div>
+          </div>
+          <div class="entry-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </button>
+        <div class="entry-body">
+          <div class="entry-section-label">Status</div>
+          <div class="entry-text">The ICP-MS analysis is on hold while Priscilla Boo is on vacation. We are using this time to plan the collection of our fifth and final soil sample from Mia G's house, which is needed to complete the screening panel before samples can be submitted. No major lab activity this week.</div>
+          <div class="entry-section-label">Notes</div>
+          <div class="entry-text">This period was anticipated — the timeline depends on grad student availability at Caltech, which is outside our direct control. We will proceed with Mia's collection as soon as possible so we are ready to submit all five samples the moment Priscilla is back.</div>
+          <div class="entry-tags">
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>waiting</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>caltech-coordination</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 3: Jun 12–19 coordination -->
+      <div class="entry-card reveal">
+        <button class="entry-toggle">
+          <div class="entry-date-col">
+            <div class="entry-day">12</div>
+            <div class="entry-mon">Jun</div>
+            <div class="entry-yr">2026</div>
+          </div>
+          <div class="entry-main">
+            <div class="entry-meta"><span class="badge badge-preparation">Preparation</span></div>
+            <div class="entry-title font-serif">Jun 12–19 — Coordinating ICP-MS with Tissot's Lab</div>
+            <div class="entry-preview">Prof. Tissot brought graduate students Merritt McDowell and Priscilla Boo into our project thread. They agreed to run ICP-MS on all five soil samples to help identify the best site for our experiment.</div>
+          </div>
+          <div class="entry-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </button>
+        <div class="entry-body">
+          <div class="entry-section-label">What Happened</div>
+          <div class="entry-text">After emailing Professor Tissot on June 12th about our test strip discovery, he brought his graduate students Merritt McDowell and Priscilla Boo into the conversation. Over the following week we coordinated with them over email to arrange ICP-MS screening of all five soil samples. They agreed to run the analysis to help us determine which plot of land has the highest lead concentration — that site will be the source of the soil for our main experiment.</div>
+          <div class="entry-section-label">Notes</div>
+          <div class="entry-text">The five samples for ICP-MS are: (1) Callum's house, (2) Hudson's house, (3) the plot behind Hudson's house, (4) Stella's house, and (5) Mia G's house (to be collected). Priscilla will run the analysis once all five samples are in hand. This is a significant upgrade from the test strips — ICP-MS gives us precise ppm measurements for multiple elements simultaneously.</div>
+          <div class="entry-images">
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8)"><div class="img-overlay"></div><div class="img-caption">Email coordination with Prof. Tissot's lab</div></div>
+          </div>
+          <div class="entry-tags">
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>icp-ms</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>tissot-lab</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>merritt-mcdowell</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>priscilla-boo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 2: Jun 12 soil testing day -->
+      <div class="entry-card reveal">
+        <button class="entry-toggle">
+          <div class="entry-date-col">
+            <div class="entry-day">12</div>
+            <div class="entry-mon">Jun</div>
+            <div class="entry-yr">2026</div>
+          </div>
+          <div class="entry-main">
+            <div class="entry-meta"><span class="badge badge-measurement">Measurement</span></div>
+            <div class="entry-title font-serif">Soil Collection &amp; Test Strip Discovery — Pivoting to ICP-MS</div>
+            <div class="entry-preview">Collected soil from Callum's and Hudson's houses. Test strips returned positive at 100 ppm and 400 ppm — but we discovered the strips detect all heavy metals, not lead specifically. We pivoted to ICP-MS and emailed Prof. Tissot.</div>
+          </div>
+          <div class="entry-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </button>
+        <div class="entry-body">
+          <div class="entry-section-label">What Happened</div>
+          <div class="entry-text">Collected soil from Callum's house, then Hudson's house, and tested both using the lead test strips we ordered from Amazon. Both returned positive at 100 ppm; Hudson's also returned positive at 400 ppm. We then tested a plot of land behind Hudson's house and Stella's yard — both positive at 400 ppm as expected given their proximity to the Eaton Fire zone.</div>
+          <div class="entry-section-label">Key Finding — Test Strips Are Not Lead-Specific</div>
+          <div class="entry-text">To confirm our hypothesis that the strips were giving false positives, we tested Arjun's backyard — which is far from the fire area and unlikely to have elevated lead levels. It also came back positive at 400 ppm. This confirmed that the strips, despite being marketed as "Lead Soil Check," detect all heavy metals including iron, which is commonly found in soil. The results cannot be used to distinguish lead from other metals.</div>
+          <div class="entry-section-label">Decision</div>
+          <div class="entry-text">We concluded that relying on these strips to select the optimal soil would produce unreliable results. We decided to pivot to ICP-MS screening for all five samples, which will give us element-specific quantitative data. We emailed Professor Tissot the same day to explain the situation and ask for his guidance.</div>
+          <div class="entry-images">
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#7c2d12,#b91c1c)"><div class="img-overlay"></div><div class="img-caption">Test strip results — positive at 100 ppm (Callum's)</div></div>
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#713f12,#ca8a04)"><div class="img-overlay"></div><div class="img-caption">Hudson's soil — positive at 400 ppm</div></div>
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#44403c,#78716c)"><div class="img-overlay"></div><div class="img-caption">Arjun's backyard false positive — confirming test strip limitation</div></div>
+          </div>
+          <div class="entry-tags">
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>soil-collection</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>test-strips</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>pivot</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>icp-ms</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 1 — oldest: Jun 10 -->
+      <div class="entry-card reveal">
+        <button class="entry-toggle">
+          <div class="entry-date-col">
+            <div class="entry-day">10</div>
+            <div class="entry-mon">Jun</div>
+            <div class="entry-yr">2026</div>
+          </div>
+          <div class="entry-main">
+            <div class="entry-meta"><span class="badge badge-preparation">Preparation</span></div>
+            <div class="entry-title font-serif">Site Scouted — Freshman Patio Selected</div>
+            <div class="entry-preview">Remick met with Ms. Fleming to discuss potential experiment locations. The corner of the freshman patio was identified as the best spot to run the experiment.</div>
+          </div>
+          <div class="entry-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </button>
+        <div class="entry-body">
+          <div class="entry-section-label">What Happened</div>
+          <div class="entry-text">Remick met with Ms. Fleming to discuss possible locations on campus where we could store and run the experiment. After evaluating options, a corner of the freshman patio was determined to be the best location — outdoor, accessible, and appropriate for the scale of our two-bin setup.</div>
+          <div class="entry-section-label">Notes</div>
+          <div class="entry-text">Having a confirmed experiment site on campus is an important logistical milestone. The outdoor location aligns with Professor Leadbetter's recommendation that all work with potentially contaminated soil be conducted outside. Next step: collect the soil samples from our candidate Eaton Fire–affected sites.</div>
+          <div class="entry-images">
+            <div class="img-placeholder" style="background:linear-gradient(135deg,#14532d,#166534)"><div class="img-overlay"></div><div class="img-caption">Freshman patio — confirmed experiment location</div></div>
+          </div>
+          <div class="entry-tags">
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>site-selection</span>
+            <span class="entry-tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>logistics</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="gallery" class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Visual Documentation</span>
+      <h2 class="section-title">Gallery</h2>
+      <p class="section-desc">Photos and media from every stage of the MycoPod experiment. Updated as the project progresses.</p>
+    </div>
+
+    <div class="gallery-note reveal">
+      <strong>Placeholder images:</strong> Gradient cards represent where real experiment photos will appear. Replace each gradient <code>&lt;div&gt;</code> with an <code>&lt;img&gt;</code> tag as photos are taken.
+    </div>
+
+    <div class="masonry reveal">
+      <div class="masonry-item aspect-video" style="background:linear-gradient(135deg,#78350f,#c2410c)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Soil collection site — Altadena, CA</p><span>June 25, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-square" style="background:linear-gradient(135deg,#44403c,#78716c)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Oyster mushroom grain spawn</p><span>June 20, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-portrait" style="background:linear-gradient(135deg,#14532d,#166534)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Inoculation — layering spawn into bins</p><span>June 30, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-video" style="background:linear-gradient(135deg,#064e3b,#0f766e)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Experimental bins positioned outdoors</p><span>June 30, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-square" style="background:linear-gradient(135deg,#115e59,#0e7490)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Hygrometer readings at inoculation</p><span>June 30, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-video" style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Caltech lab — delivering baseline soil samples</p><span>June 28, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-square" style="background:linear-gradient(135deg,#92400e,#b45309)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Soil homogenization using tarp method</p><span>June 25, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-portrait" style="background:linear-gradient(135deg,#7c2d12,#b91c1c)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Baseline ICP-MS aliquots sealed and labeled</p><span>June 25, 2026</span></div>
+      </div>
+      <div class="masonry-item aspect-video" style="background:linear-gradient(135deg,#334155,#475569)">
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption"><p>Materials inventory and setup</p><span>June 20, 2026</span></div>
+      </div>
+    </div>
+
+    <p style="text-align:center;font-size:.85rem;color:var(--muted-fg);margin-top:2rem">
+      More photos will be added as the experiment progresses through summer 2026.
+    </p>
+  </div>
+</section>
+
+<section id="results" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Data &amp; Findings</span>
+      <h2 class="section-title">Results</h2>
+      <p class="section-desc">ICP-MS soil analysis data from Professor Tissot's laboratory at Caltech. Updated as results arrive.</p>
+    </div>
+
+    <div class="pending-state reveal">
+      <div class="pending-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <h2>Results Pending</h2>
+      <p>The experiment is currently in progress. ICP-MS baseline analysis has been submitted to Caltech. Post-experiment measurements are expected in August 2026.</p>
+    </div>
+
+    <div class="results-grid reveal">
+      <div class="card">
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+            <div style="width:2.25rem;height:2.25rem;border-radius:.5rem;background:rgba(59,130,246,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg viewBox="0 0 24 24" style="width:1.1rem;height:1.1rem;stroke:#3b82f6;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+            </div>
+            <h3 style="font-size:1rem">Baseline ICP-MS</h3>
+          </div>
+          <p class="text-sm text-muted">Soil samples submitted to Professor Tissot's Caltech laboratory on June 28, 2026. Awaiting results — expected within 2–3 weeks.</p>
+          <div style="margin-top:1rem;padding:.75rem 1rem;border-radius:.5rem;background:var(--muted);font-size:.78rem;color:var(--muted-fg);line-height:1.7">
+            Method: ICP-MS<br>Precision: Parts-per-million (ppm)<br>Target analyte: Lead (Pb)
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+            <div style="width:2.25rem;height:2.25rem;border-radius:.5rem;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg viewBox="0 0 24 24" style="width:1.1rem;height:1.1rem;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <h3 style="font-size:1rem">Expected Data Format</h3>
+          </div>
+          <ul style="list-style:none;font-size:.85rem;color:var(--muted-fg);display:flex;flex-direction:column;gap:.6rem">
+            <li style="display:flex;gap:.6rem;align-items:flex-start"><span style="width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:.45rem"></span>Pre-experiment Pb concentration (ppm) — 3 aliquots</li>
+            <li style="display:flex;gap:.6rem;align-items:flex-start"><span style="width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:.45rem"></span>Post-experiment Pb concentration (ppm) — 3 aliquots per bin</li>
+            <li style="display:flex;gap:.6rem;align-items:flex-start"><span style="width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:.45rem"></span>Mean, standard deviation, percent change</li>
+            <li style="display:flex;gap:.6rem;align-items:flex-start"><span style="width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:.45rem"></span>Statistical significance assessment</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal mt-8">
+      <div class="card-body">
+        <h3 class="font-serif mb-6" style="font-size:1.35rem">Lead Concentration Data</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Sample</th><th>Timepoint</th><th>Pb Conc. (ppm)</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:monospace;font-size:.8rem">Aliquot A-1</td><td>Baseline (pre-experiment)</td><td>—</td><td><span class="status-badge status-pending">Pending</span></td></tr>
+              <tr><td style="font-family:monospace;font-size:.8rem">Aliquot A-2</td><td>Baseline (pre-experiment)</td><td>—</td><td><span class="status-badge status-pending">Pending</span></td></tr>
+              <tr><td style="font-family:monospace;font-size:.8rem">Aliquot A-3</td><td>Baseline (pre-experiment)</td><td>—</td><td><span class="status-badge status-pending">Pending</span></td></tr>
+              <tr><td style="font-family:monospace;font-size:.8rem">Bin 1 — B-1</td><td>Post-experiment</td><td>—</td><td><span class="status-badge status-pending">Not yet collected</span></td></tr>
+              <tr><td style="font-family:monospace;font-size:.8rem">Bin 1 — B-2</td><td>Post-experiment</td><td>—</td><td><span class="status-badge status-pending">Not yet collected</span></td></tr>
+              <tr><td style="font-family:monospace;font-size:.8rem">Bin 2 — C-1</td><td>Post-experiment</td><td>—</td><td><span class="status-badge status-pending">Not yet collected</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-muted mt-4">All ICP-MS analysis conducted by Professor François Tissot's laboratory, Caltech Division of Geological and Planetary Sciences.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mentors" class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Collaborators &amp; Mentors</span>
+      <h2 class="section-title">Scientific Advisory Team</h2>
+      <p class="section-desc">MycoPod is conducted in collaboration with faculty from Caltech and The Polytechnic School, whose expertise spans geochemistry, environmental microbiology, and biological research.</p>
+    </div>
+
+    <div class="grid-3">
+      <!-- Professor Tissot -->
+      <div class="card reveal">
+        <div class="mentor-card">
+          <div class="mentor-header">
+            <div class="mentor-avatar" style="background:linear-gradient(135deg,#2563eb,#4338ca)">
+              <span>T</span>
+            </div>
+            <div>
+              <div class="mentor-name font-serif">Professor François Tissot</div>
+              <div class="mentor-title">Professor of Geochemistry</div>
+              <div class="mentor-inst">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                California Institute of Technology
+              </div>
+            </div>
+          </div>
+          <div class="mentor-role-badge">ICP-MS Analysis Partner</div>
+          <div class="mentor-bio">Professor Tissot is a geochemist and investigator at the Heritage Medical Research Institute at Caltech. His research on lead contamination from the 2025 Eaton Fire directly aligned with the MycoPod project, leading to our collaboration after attending his Watson Lecture Series talk.</div>
+          <div class="mentor-contributions">
+            <h4>Contributions</h4>
+            <ul>
+              <li>Providing ICP-MS soil analysis for parts-per-million lead measurement</li>
+              <li>Advising on experimental design and soil sampling protocols</li>
+              <li>Connecting us with Professor Leadbetter for expert microbiological guidance</li>
+              <li>Recommending soil collection sites from the Eaton Fire affected area</li>
+            </ul>
+          </div>
+          <div class="mentor-dept">Division of Geological and Planetary Sciences</div>
+        </div>
+      </div>
+
+      <!-- Professor Leadbetter -->
+      <div class="card reveal reveal-delay-1">
+        <div class="mentor-card">
+          <div class="mentor-header">
+            <div class="mentor-avatar" style="background:linear-gradient(135deg,#059669,#0f766e)">
+              <span>L</span>
+            </div>
+            <div>
+              <div class="mentor-name font-serif">Professor Jared Leadbetter</div>
+              <div class="mentor-title">Professor of Environmental Microbiology</div>
+              <div class="mentor-inst">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                California Institute of Technology
+              </div>
+            </div>
+          </div>
+          <div class="mentor-role-badge">Experimental Design Advisor</div>
+          <div class="mentor-bio">Professor Leadbetter is an environmental microbiologist at Caltech whose expertise encompasses microbial ecology and the interactions between microorganisms and their environment. Professor Tissot referred us to him as a more specialized expert in fungal and microbial systems.</div>
+          <div class="mentor-contributions">
+            <h4>Contributions</h4>
+            <ul>
+              <li>Advising on safe handling and containment protocols for lead-contaminated soil</li>
+              <li>Recommending simplification of the design to remove the hydrogel component for the first iteration</li>
+              <li>Suggesting outdoor, non-moisture-controlled environment to mitigate fungal pathogen risk</li>
+              <li>Remaining available for ongoing feedback as the experiment progresses</li>
+            </ul>
+          </div>
+          <div class="mentor-dept">Division of Biology and Biological Engineering</div>
+        </div>
+      </div>
+
+      <!-- Dr. S -->
+      <div class="card reveal reveal-delay-2">
+        <div class="mentor-card">
+          <div class="mentor-header">
+            <div class="mentor-avatar" style="background:linear-gradient(135deg,#d97706,#c2410c)">
+              <span>S</span>
+            </div>
+            <div>
+              <div class="mentor-name font-serif">Dr. S</div>
+              <div class="mentor-title">Biological Research Instructor</div>
+              <div class="mentor-inst">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                The Polytechnic School
+              </div>
+            </div>
+          </div>
+          <div class="mentor-role-badge">Primary Academic Mentor</div>
+          <div class="mentor-bio">Throughout the 2025–26 school year, Dr. S has provided foundational guidance, feedback, and support from the earliest stages of this project — from the initial MIT Think proposal through the Earth Prize application, the published Genomics Insights article, and ongoing experimental work.</div>
+          <div class="mentor-contributions">
+            <h4>Contributions</h4>
+            <ul>
+              <li>Providing feedback and direction during the MIT Think Challenge proposal phase</li>
+              <li>Supporting the development of the Earth Prize application</li>
+              <li>Guiding the research and writing of the published Genomics Insights review article</li>
+              <li>Offering biological research expertise and academic mentorship throughout</li>
+            </ul>
+          </div>
+          <div class="mentor-dept">Math and Science Department</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acknowledgment reveal">
+      <h3>Acknowledgments</h3>
+      <p>We are deeply grateful to Professor François Tissot and Professor Jared Leadbetter for their generosity in providing scientific guidance, ICP-MS resources, and expert feedback. Their willingness to engage with a high school research project reflects a genuine commitment to public education and community science.</p>
+      <p>We also thank Dr. S for an entire school year of mentorship, feedback, and support — from the earliest research ideas through peer-reviewed publication and ongoing experimentation.</p>
+      <p>This project was supported by The Sabrina Zhang '23 Prize for Interdisciplinary Entrepreneurship at The Polytechnic School.</p>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="section">
+  <div class="container">
+    <div class="section-header centered reveal">
+      <span class="eyebrow">Questions &amp; Answers</span>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-desc">Answers to common questions about the MycoPod project — its safety, scientific basis, and future plans.</p>
+    </div>
+
+    <div style="max-width:48rem;margin:0 auto">
+      <div class="faq-category">
+        <div class="faq-cat-title font-serif">Safety</div>
+        <div class="faq-cat-desc text-muted">Questions about health and safety protocols</div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Is working with lead-contaminated soil safe?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>Yes, with proper precautions. The California screening level for lead in soil is 80 ppm — below which all normal activities occur without restriction. The EPA level is 200 ppm, where the main precaution is washing hands afterward. Hazardous levels begin near 1,000 ppm. We work with Professor Leadbetter's safety recommendations: conducting the experiment outdoors, wearing gloves and N95 masks, and following appropriate handling protocols. We are in contact with Professor Tissot to ensure soil is within a safe working range.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Where will the experiment be conducted?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>Professor Leadbetter recommended conducting the experiment outdoors in a non-moisture-controlled environment to minimize fungal pathogen buildup. Potential locations include near the Polytechnic School composting bins or at one of our homes. The bins are kept out of direct sunlight to maintain a stable temperature conducive to fungal growth.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Will the mushrooms be eaten?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>No. Mushrooms that have grown in lead-contaminated soil should never be consumed. The oyster mushrooms in this experiment are strictly for scientific purposes — measuring lead sequestration into fungal biomass. After the experiment concludes, all materials will be disposed of according to appropriate protocols for lead-contaminated biological waste.</p></div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <div class="faq-cat-title font-serif">The Science</div>
+        <div class="faq-cat-desc text-muted">How mycoremediation works and why we chose oyster mushrooms</div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Why oyster mushrooms specifically?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>Pleurotus ostreatus were selected because they are among the most extensively studied species in mycoremediation research, with documented heavy metal bioaccumulation capacity. They are commercially available as grain spawn for consistent inoculation, relatively fast-growing, hardy in a range of outdoor conditions, and non-pathogenic with well-documented biology and handling guidelines.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">How do fungi absorb lead from soil?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>Fungi can interact with heavy metals through several mechanisms: biosorption (passive binding of metals to cell wall components like chitin and glucans); bioaccumulation (active uptake of metals into the organism); and bioprecipitation (converting dissolved metals into insoluble forms). The fungal mycelium creates an enormous surface area that interacts with soil particles and pore water, making it an effective biological sorbent.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">How will you measure results?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>We use ICP-MS (Inductively Coupled Plasma Mass Spectrometry), provided through Professor Tissot's laboratory at Caltech. ICP-MS is capable of measuring elemental concentrations at parts-per-million (ppm) and even parts-per-billion sensitivity. Soil samples are analyzed before inoculation and after the experiment concludes; the comparison reveals any statistically significant changes in lead concentration.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">What happened to the hydrogel encapsulation?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>The original MycoPod concept involved encapsulating oyster mushroom spawn within a hydrogel matrix for controlled deployment in arid soil. After consulting with Professor Leadbetter, we decided to remove the hydrogel component from this first iteration — it would require specialized machinery and expertise beyond what we currently have. This simplified proof-of-concept will validate fungal growth and lead sequestration first; the hydrogel system remains a planned enhancement for a future iteration.</p></div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <div class="faq-cat-title font-serif">The Project</div>
+        <div class="faq-cat-desc text-muted">Experimental choices, soil sourcing, and how this approach differs</div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Why not just remove the contaminated soil?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>Soil removal (excavation) is expensive, disruptive, and creates disposal challenges — contaminated soil removed from one site must be disposed of somewhere else, often in landfills or specialized facilities. Bioremediation approaches like mycoremediation offer a potentially more cost-effective, less disruptive in-situ alternative that treats contamination where it occurs rather than relocating it.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Where is the soil coming from?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>We explored several sources for lead-contaminated soil from the Eaton Fire affected area. Professor Tissot recommended a specific location in Altadena, and we also reached out to the USC CLEAN Project (Clean Los Angeles Earth Action Network), a research initiative focused on post-fire soil contamination. All soil acquisition prioritized safety for the researchers and compliance with appropriate environmental handling standards.</p></div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <div class="faq-cat-title font-serif">Future Directions</div>
+        <div class="faq-cat-desc text-muted">What happens after this experiment and whether this can scale</div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Can mycoremediation scale to large contaminated areas?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>That is one of the most important open questions. This experiment is an intentionally small proof-of-concept to validate whether fungal sequestration of lead occurs under realistic field conditions. Scaling mycoremediation would require solving challenges around species selection for specific contaminants and climates, inoculation delivery mechanisms, monitoring at scale, and regulatory frameworks. A successful first iteration here would be one foundational data point in that larger picture.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">What happens after this experiment?<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer"><p>If results show significant lead sequestration, we plan to share findings with Professors Leadbetter and Tissot and potentially publish them. A second iteration would reintroduce the hydrogel encapsulation system for more controlled deployment. We also envision expanding to test multiple fungal species, additional heavy metals (such as PAHs), and eventually designing a deployable system for use in fire-affected communities.</p></div>
+        </div>
+      </div>
+
+      <div class="faq-still-have reveal">
+        <h3>Still have questions?</h3>
+        <p>We're happy to answer questions about our research, methods, or findings.</p>
+        <a href="#contact" class="btn-primary" style="display:inline-flex">Get in touch</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Bibliography</span>
+      <h2 class="section-title">References</h2>
+      <p class="section-desc">Scientific literature and sources that informed the MycoPod research, formatted in APA style.</p>
+    </div>
+
+    <div class="pub-highlight reveal">
+      <div class="pub-label">Our Publication</div>
+      <p>Singh, A., Techentin, R., &amp; S., [Dr.]. (2026). Mycoremediation as a Strategy for Heavy Metal Sequestration in Wildfire-Affected Soils: A Review. <em>Genomics Insights, 19.</em></p>
+    </div>
+
+    <div class="ref-group reveal">
+      <div class="ref-group-header">
+        <div class="ref-group-title font-serif">Journal Articles</div>
+        <span class="ref-count ref-journal">10</span>
+      </div>
+      <div class="ref-list">
+        <div class="ref-item"><div class="ref-num">1</div><div><div class="ref-cite">Baldrian, P. (2003). Interactions of heavy metals with white-rot fungi. <em>Enzyme and Microbial Technology, 32</em>(1), 78–91.</div><a href="https://doi.org/10.1016/S0141-0229(02)00245-4" target="_blank" class="ref-doi">doi:10.1016/S0141-0229(02)00245-4<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+        <div class="ref-item"><div class="ref-num">2</div><div><div class="ref-cite">Gadd, G. M. (2010). Metals, minerals and microbes: Geomicrobiology and bioremediation. <em>Microbiology, 156</em>(3), 609–643.</div><a href="https://doi.org/10.1099/mic.0.037143-0" target="_blank" class="ref-doi">doi:10.1099/mic.0.037143-0<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+        <div class="ref-item"><div class="ref-num">3</div><div><div class="ref-cite">Kapahi, M., &amp; Sachdeva, S. (2017). Mycoremediation potential of Pleurotus species for heavy metals: A review. <em>Bioresources and Bioprocessing, 4</em>(1), 32.</div><a href="https://doi.org/10.1186/s40643-017-0162-8" target="_blank" class="ref-doi">doi:10.1186/s40643-017-0162-8<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+        <div class="ref-item"><div class="ref-num">4</div><div><div class="ref-cite">Levin, L., Forchiassin, F., &amp; Ramos, A. M. (2002). Copper induction of ligninolytic enzymes in the white-rot fungus Trametes trogii. <em>Mycologia, 94</em>(3), 377–383.</div></div></div>
+        <div class="ref-item"><div class="ref-num">5</div><div><div class="ref-cite">Malachowska-Jutsz, A., &amp; Kalka, J. (2010). Influence of mycorrhizal fungi on uptake of heavy metals in Festuca rubra growing on post-industrial waste. <em>Polish Journal of Environmental Studies, 19</em>(4), 793–800.</div></div></div>
+        <div class="ref-item"><div class="ref-num">6</div><div><div class="ref-cite">Stamets, P., &amp; Zwickey, H. (2014). Medicinal mushrooms: Ancient remedies meet modern science. <em>Integrative Medicine: A Clinician's Journal, 13</em>(1), 46–47.</div></div></div>
+        <div class="ref-item"><div class="ref-num">7</div><div><div class="ref-cite">Tejada-Jiménez, M., Galván, A., Fernández, E., &amp; Llamas, Á. (2009). Homeostasis of the micronutrients Ni, Mo and Cl with specific biochemical functions. <em>Plant Science, 178</em>(1), 9–16.</div><a href="https://doi.org/10.1016/j.plantsci.2009.10.010" target="_blank" class="ref-doi">doi:10.1016/j.plantsci.2009.10.010<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+        <div class="ref-item"><div class="ref-num">8</div><div><div class="ref-cite">Vimala, R., &amp; Das, N. (2009). Biosorption of cadmium (II) and lead (II) from aqueous solutions using mushrooms: A comparative study. <em>Journal of Hazardous Materials, 168</em>(1), 376–382.</div><a href="https://doi.org/10.1016/j.jhazmat.2009.02.062" target="_blank" class="ref-doi">doi:10.1016/j.jhazmat.2009.02.062<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+        <div class="ref-item"><div class="ref-num">9</div><div><div class="ref-cite">Zafar, S., Aqil, F., &amp; Ahmad, I. (2007). Metal tolerance and biosorption potential of filamentous fungi isolated from metal contaminated agricultural soil. <em>Bioresource Technology, 98</em>(13), 2557–2561.</div><a href="https://doi.org/10.1016/j.biortech.2006.09.051" target="_blank" class="ref-doi">doi:10.1016/j.biortech.2006.09.051<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+        <div class="ref-item"><div class="ref-num">10</div><div><div class="ref-cite">Singh, A., Techentin, R., &amp; S., [Dr.]. (2026). Mycoremediation as a Strategy for Heavy Metal Sequestration in Wildfire-Affected Soils: A Review. <em>Genomics Insights, 19.</em></div></div></div>
+      </div>
+    </div>
+
+    <div class="ref-group reveal">
+      <div class="ref-group-header">
+        <div class="ref-group-title font-serif">Government Reports</div>
+        <span class="ref-count ref-report">2</span>
+      </div>
+      <div class="ref-list">
+        <div class="ref-item"><div class="ref-num">11</div><div><div class="ref-cite">California Department of Toxic Substances Control. (2025). <em>Eaton Fire Ash and Soil Contamination Assessment Report.</em></div><a href="https://dtsc.ca.gov" target="_blank" class="ref-doi">dtsc.ca.gov<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+        <div class="ref-item"><div class="ref-num">12</div><div><div class="ref-cite">California EPA. (2021). <em>Human Health Screening Levels for Lead in Soil.</em></div><a href="https://oehha.ca.gov" target="_blank" class="ref-doi">oehha.ca.gov<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+      </div>
+    </div>
+
+    <div class="ref-group reveal">
+      <div class="ref-group-header">
+        <div class="ref-group-title font-serif">Websites</div>
+        <span class="ref-count ref-website">1</span>
+      </div>
+      <div class="ref-list">
+        <div class="ref-item"><div class="ref-num">13</div><div><div class="ref-cite">United States Environmental Protection Agency. (2024). <em>Lead in Soil: Protecting Public Health.</em></div><a href="https://www.epa.gov/lead/lead-soil" target="_blank" class="ref-doi">epa.gov/lead/lead-soil<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Get in Touch</span>
+      <h2 class="section-title">Contact</h2>
+      <p class="section-desc">Questions about our research, experimental design, or the science of mycoremediation? We welcome thoughtful inquiries.</p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- Info column -->
+      <div class="reveal">
+        <h3 style="font-size:.85rem;font-weight:600;color:var(--fg);margin-bottom:1rem">The Research Team</h3>
+        <div class="contact-person">
+          <div class="cp-avatar"><span>A</span></div>
+          <div><div class="cp-name">Arjun Singh</div><div class="cp-role">Co-Researcher</div></div>
+        </div>
+        <div class="contact-person">
+          <div class="cp-avatar"><span>R</span></div>
+          <div><div class="cp-name">Remick Techentin</div><div class="cp-role">Co-Researcher</div></div>
+        </div>
+
+        <div style="margin-top:1.75rem">
+          <h3 style="font-size:.85rem;font-weight:600;color:var(--fg);margin-bottom:1rem">Details</h3>
+          <div class="contact-info-item">
+            <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+            <div><div class="ci-label">Institution</div><div class="ci-value">The Polytechnic School, Pasadena, CA</div></div>
+          </div>
+          <div class="contact-info-item">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div><div class="ci-label">Experiment Location</div><div class="ci-value">Altadena / Pasadena, California</div></div>
+          </div>
+          <div class="contact-info-item">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <div><div class="ci-label">Response Time</div><div class="ci-value">We aim to respond within 1–2 weeks</div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.75rem">
+          <h3 style="font-size:.85rem;font-weight:600;color:var(--fg);margin-bottom:1rem">Publications</h3>
+          <a href="#" style="display:flex;align-items:center;gap:.35rem;font-size:.875rem;color:var(--primary);margin-bottom:.5rem">MIT Think Challenge Proposal<svg viewBox="0 0 24 24" style="width:.75rem;height:.75rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+          <a href="#" style="display:flex;align-items:center;gap:.35rem;font-size:.875rem;color:var(--primary)">Genomics Insights Paper<svg viewBox="0 0 24 24" style="width:.75rem;height:.75rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+        </div>
+      </div>
+
+      <!-- Form column -->
+      <div class="reveal reveal-delay-1">
+        <div class="form-card">
+          <h3>Send a Message</h3>
+          <div id="form-wrap">
+            <form id="contact-form">
+              <div class="form-row">
+                <div class="form-field"><label for="f-name">Name <span class="req">*</span></label><input id="f-name" type="text" placeholder="Your name" required></div>
+                <div class="form-field"><label for="f-email">Email <span class="req">*</span></label><input id="f-email" type="email" placeholder="you@example.com" required></div>
+              </div>
+              <div class="form-field"><label for="f-affil">Affiliation</label><input id="f-affil" type="text" placeholder="Institution or organization (optional)"></div>
+              <div class="form-field"><label for="f-subject">Subject <span class="req">*</span></label><input id="f-subject" type="text" placeholder="What is your message about?" required></div>
+              <div class="form-field"><label for="f-msg">Message <span class="req">*</span></label><textarea id="f-msg" placeholder="Your message…" required></textarea></div>
+              <button type="submit" class="btn-primary" style="width:100%;justify-content:center">
+                <svg viewBox="0 0 24 24" style="width:1rem;height:1rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="20" r="9" fill="#3D7A2E" opacity=".15"/>
+            <path d="M16 20 C16 14 10 8 16 4 C22 8 16 14 16 20" fill="#3D7A2E" opacity=".6"/>
+            <path d="M16 20 C16 14 10 6 8 10 C6 14 12 18 16 20" fill="#3D7A2E" opacity=".4"/>
+            <path d="M16 20 C16 14 22 6 24 10 C26 14 20 18 16 20" fill="#3D7A2E" opacity=".4"/>
+            <circle cx="16" cy="20" r="2.5" fill="#3D7A2E"/>
+          </svg>
+          <span>MycoPod</span>
+        </div>
+        <p>Investigating fungal bioremediation as a strategy for lead sequestration in wildfire-affected soils. Supported by The Sabrina Zhang '23 Prize for Interdisciplinary Entrepreneurship.</p>
+        <div class="footer-tags">
+          <span>The Polytechnic School</span>
+          <span>Caltech Collaboration</span>
+          <span>Altadena, CA</span>
+        </div>
+      </div>
+
+      <div class="footer-nav-cols">
+        <div class="footer-col">
+          <div class="footer-col-title">Research</div>
+          <a href="#research">Methodology</a>
+          <a href="#progress">Daily Log</a>
+          <a href="#results">Results</a>
+          <a href="#gallery">Gallery</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Project</div>
+          <a href="#about">About</a>
+          <a href="#mentors">Mentors</a>
+          <a href="#faq">FAQ</a>
+          <a href="#references">References</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Connect</div>
+          <a href="#contact">Contact</a>
+          <a href="#">MIT Think Proposal</a>
+          <a href="#">Genomics Insights</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Arjun Singh &amp; Remick Techentin · MycoPod Research</span>
+      <span>The Polytechnic School · Pasadena, California</span>
+    </div>
+  </footer>
+
+<script>
+  /* ============================================================
+     THEME
+  ============================================================ */
+  (function() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    /* -- Theme toggle -- */
+    const html = document.documentElement;
+    const btn  = document.getElementById('theme-toggle');
+    const moon = document.getElementById('icon-moon');
+    const sun  = document.getElementById('icon-sun');
+
+    function updateThemeIcons() {
+      const isDark = html.classList.contains('dark');
+      moon.style.display = isDark ? 'none'  : 'block';
+      sun.style.display  = isDark ? 'block' : 'none';
+    }
+    updateThemeIcons();
+
+    btn.addEventListener('click', function() {
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      updateThemeIcons();
+      drawMycelium(); // redraw with new colors
+    });
+
+    /* -- Scroll progress -- */
+    const progressBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', function() {
+      const scrolled = window.scrollY;
+      const total    = document.documentElement.scrollHeight - window.innerHeight;
+      progressBar.style.transform = 'scaleX(' + (scrolled / total) + ')';
+    }, { passive: true });
+
+    /* -- Navbar scroll state -- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    /* -- Mobile menu -- */
+    const menuToggle  = document.getElementById('menu-toggle');
+    const mobileMenu  = document.getElementById('mobile-menu');
+    const iconMenu    = document.getElementById('icon-menu');
+    const iconClose   = document.getElementById('icon-close');
+
+    menuToggle.addEventListener('click', function() {
+      const isOpen = mobileMenu.classList.toggle('open');
+      iconMenu.style.display  = isOpen ? 'none'  : 'block';
+      iconClose.style.display = isOpen ? 'block' : 'none';
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    // Close mobile menu on nav link click
+    mobileMenu.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        mobileMenu.classList.remove('open');
+        iconMenu.style.display  = 'block';
+        iconClose.style.display = 'none';
+        document.body.style.overflow = '';
+      });
+    });
+
+    /* -- Active nav link on scroll -- */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a, #mobile-menu a');
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          navLinks.forEach(function(link) {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+
+    /* -- Scroll reveal -- */
+    const revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      revealObserver.observe(el);
+    });
+
+    /* -- FAQ accordion -- */
+    document.querySelectorAll('.faq-question').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const item = btn.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        // close all
+        document.querySelectorAll('.faq-item.open').forEach(function(el) {
+          el.classList.remove('open');
+        });
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+
+    /* -- Progress entries accordion -- */
+    document.querySelectorAll('.entry-toggle').forEach(function(toggle, i) {
+      toggle.addEventListener('click', function() {
+        const body    = toggle.nextElementSibling;
+        const chevron = toggle.querySelector('.entry-chevron');
+        const preview = toggle.querySelector('.entry-preview');
+        const isOpen  = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        chevron.classList.toggle('open', !isOpen);
+        if (preview) preview.style.display = isOpen ? '' : 'none';
+      });
+      // Open first entry by default
+      if (i === 0) toggle.click();
+    });
+
+    /* -- Contact form -- */
+    const form = document.getElementById('contact-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const submitBtn = form.querySelector('[type=submit]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+        setTimeout(function() {
+          document.getElementById('form-wrap').innerHTML = `
+            <div class="form-success">
+              <div class="form-success-icon">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h3>Message sent.</h3>
+              <p>Thank you for reaching out. We'll respond as soon as we can.</p>
+            </div>`;
+        }, 800);
+      });
+    }
+
+    /* -- Mycelium canvas -- */
+    drawMycelium();
+    window.addEventListener('resize', drawMycelium);
+  });
+
+  /* ============================================================
+     MYCELIUM CANVAS
+  ============================================================ */
+  function drawMycelium() {
+    const canvas = document.getElementById('mycelium-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const dpr = window.devicePixelRatio || 1;
+    const w   = canvas.offsetWidth;
+    const h   = canvas.offsetHeight;
+    canvas.width  = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+
+    const color = 'rgba(210,140,55,0.065)';
+
+    function branch(x, y, angle, len, depth) {
+      if (depth === 0 || len < 3) return;
+      const ex = x + Math.cos(angle) * len;
+      const ey = y + Math.sin(angle) * len;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = Math.max(0.2, depth * 0.22);
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+      const n = Math.random() < 0.4 ? 3 : 2;
+      for (let i = 0; i < n; i++) {
+        branch(ex, ey, angle + (Math.random() - 0.5) * 1.1, len * 0.65, depth - 1);
+      }
+    }
+
+    const seeds = [
+      [w * .08, h * .15], [w * .22, h * .72], [w * .45, h * .08],
+      [w * .68, h * .55], [w * .82, h * .18], [w * .91, h * .82],
+      [w * .55, h * .92], [w * .33, h * .38],
+    ];
+    seeds.forEach(function([sx, sy]) {
+      for (let i = 0; i < 5; i++) {
+        branch(sx, sy, (Math.PI * 2 * i / 5) + (Math.random() - 0.5) * 0.5, 55 + Math.random() * 40, 5);
+      }
+    });
+  }
+</script>
+</body>
+</html>
